@@ -33,7 +33,7 @@ sentence:
 
 complex_verb:
     verb_phrase
-    | verb_phrase optional_comma CONNECTOR sentence
+    | verb_phrase CONNECTOR sentence
     ;
 
 optional_comma:
@@ -42,9 +42,9 @@ optional_comma:
     ;
 
 verb_phrase:
-    move_phrase PUNCT
-    | move_phrase DIRECTION PUNCT
-    | rotate_phrase PUNCT
+    move_phrase optional_comma
+    | move_phrase DIRECTION optional_comma
+    | rotate_phrase optional_comma
     ;
 
 move_phrase:
