@@ -6,30 +6,51 @@ FILE *output;
 extern FILE *yyin;
 void yyerror(const char *s);
 int yylex(void);
+
+int please_counter=0;
 %}
 
 %union {
     int num;
 }
 
-%token ROBOT PLEASE MOVE TURN BLOCKS DEGREES DIRECTION CONNECTOR PUNCT
+%token SUBJECT COURTESY_WORD MOVE TURN BLOCKS DEGREES DIRECTION CONNECTOR COMMA DOT BACKWARD
 %token <num> NUMBER DEGREE
 %type <num> move_phrase rotate_phrase
 
+
 %%
+program:
+    sentence_list
+    ;
+
+sentence_list:
+    structure_sentence DOT
+    | structure_sentence DOT sentence_list
+    ;
 
 structure_sentence:
-    requirements sentence
+    requirements sentence requirements{
+        if (please_counter == 0){
+            yyerror("Syntax error: You must use at least 'please' at the beginning or end of the sentence.\n");
+            YYABORT;
+        }
+            please_counter=0;
+    }
     ;
 
 requirements:
-    ROBOT PLEASE
-    | PLEASE ROBOT
+    /* nothing */
+    | SUBJECT COURTESY_WORD {please_counter=1;}
+    | COURTESY_WORD SUBJECT {please_counter=1;}
+    | SUBJECT
+    | COURTESY_WORD {please_counter=1;}
     ;
 
 sentence:
     complex_verb
     ;
+
 
 complex_verb:
     verb_phrase
@@ -38,19 +59,29 @@ complex_verb:
 
 optional_comma:
     /* nothing */
-    | PUNCT
+    | COMMA
     ;
 
 verb_phrase:
     move_phrase optional_comma
     | move_phrase DIRECTION optional_comma
     | rotate_phrase optional_comma
+    | move_backward_phrase optional_comma 
     ;
 
 move_phrase:
     MOVE NUMBER BLOCKS
     {
         fprintf(output, "MOV,%d\n", $2);
+    }
+    ;
+
+move_backward_phrase:
+    MOVE NUMBER BLOCKS BACKWARD
+    {
+        fprintf(output, "TURN,180\n");
+        fprintf(output, "MOV,%d\n", $2);
+        fprintf(output, "TURN,180\n");
     }
     ;
 
@@ -90,5 +121,6 @@ int main(int argc, char **argv) {
 
     fclose(in);
     fclose(output);
+
     return 0;
 }
