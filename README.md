@@ -20,7 +20,7 @@ El analizador léxico debe tener la habilidad de identificar estas categorías, 
 ---
 
 ### 📌 Definición de tokens
-```lex
+
 "Robot"               { return SUBJECT; }
 "robot"               { return SUBJECT; }
 "Please"              { return COURTESY_WORD; }
