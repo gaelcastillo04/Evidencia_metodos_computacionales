@@ -10,16 +10,45 @@ El objetivo principal es contruir el analizador léxico (Lex) y un analizador si
 El analizador léxico tiene la tarea de leer una entrada que contiene instrucciones destinadas a un robot y desglosarla en unidades léxicas de importancia denominadas *tokens*. Estas unidades facilitarán al compilador la comprensión de los diferentes elementos de las frases, tales como:
 
 - *Sustantivos*: indican entidades o elementos del entorno del robot (ej. "Robot", "blocks", "degrees").  
-- *Verbos*: describen las acciones que el robot puede ejecutar (ej. "move", "turn", "stop").  
-- *Palabras de cortesía*: ayudan a que las instrucciones sean más "humanas" y amables (ej. "please", "thank you").  
+- *Verbos*: describen las acciones que el robot puede ejecutar (ej. "move", "turn").  
+- *Palabras de cortesía*: ayudan a que las instrucciones sean más "humanas" y amables (ej. "please").  
 - *Números*: representan cantidades ({1-10}, {90, 180, 270, 360}).  
-- *Conectores y preposiciones*: indican orden o dirección (ej. "and", "then", "ahead", "right").  
+- *Conectores y preposiciones*: indican orden o dirección (ej. "and", "then", "ahead", "forward", "backwards").  
 
 El analizador léxico debe tener la habilidad de identificar estas categorías, pasar por alto espacios o tabulaciones, y *informar sobre cualquier símbolo no identificado como error*.
 
 ---
 
 ### 📌 Definición de tokens
+```lex
+"Robot"               { return SUBJECT; }
+"robot"               { return SUBJECT; }
+"Please"              { return COURTESY_WORD; }
+"please"              { return COURTESY_WORD; }
+"move"                { return MOVE; }
+"turn"                { return TURN; }
+[1-9]+                { yylval.num = atoi(yytext); return NUMBER; }
+90                    { yylval.num = atoi(yytext); return DEGREE; }
+180                   { yylval.num = atoi(yytext); return DEGREE; }
+270                   { yylval.num = atoi(yytext); return DEGREE; }
+360                   { yylval.num = atoi(yytext); return DEGREE; }
+"blocks"              { return BLOCKS; }
+"block"               { return BLOCKS; }
+"degrees"             { return DEGREES; }
+"ahead"               { return DIRECTION; }
+"forward"             { return DIRECTION; }
+"backwards"           { return BACKWARD; }
+"backward"            { return BACKWARD; }
+"and then"            { return CONNECTOR; }
+"then"                { return CONNECTOR; }
+"next"                { return CONNECTOR; }
+"and finally"         { return CONNECTOR; }
+","                   { return COMMA; }
+"."                   { return DOT; }
+[ \t\n]+              { /* skip espacios vacios */ }
+.                     { printf("Illegal character: %s\n", yytext); return -1; }
+
+
 
 ### ✅ Lista de ejemplos aceptados:
 
