@@ -21,40 +21,39 @@ El analizador léxico debe tener la habilidad de identificar estas categorías, 
 
 ### 📌 Definición de tokens
 
-"Robot"               { return SUBJECT; }
-"robot"               { return SUBJECT; }
-"Please"              { return COURTESY_WORD; }
-"please"              { return COURTESY_WORD; }
-"move"                { return MOVE; }
-"turn"                { return TURN; }
-[1-9]+                { yylval.num = atoi(yytext); return NUMBER; }
-90                    { yylval.num = atoi(yytext); return DEGREE; }
-180                   { yylval.num = atoi(yytext); return DEGREE; }
-270                   { yylval.num = atoi(yytext); return DEGREE; }
-360                   { yylval.num = atoi(yytext); return DEGREE; }
-"blocks"              { return BLOCKS; }
-"block"               { return BLOCKS; }
-"degrees"             { return DEGREES; }
-"ahead"               { return DIRECTION; }
-"forward"             { return DIRECTION; }
-"backwards"           { return BACKWARD; }
-"backward"            { return BACKWARD; }
-"and then"            { return CONNECTOR; }
-"then"                { return CONNECTOR; }
-"next"                { return CONNECTOR; }
-"and finally"         { return CONNECTOR; }
-","                   { return COMMA; }
-"."                   { return DOT; }
-[ \t\n]+              { /* skip espacios vacios */ }
-.                     { printf("Illegal character: %s\n", yytext); return -1; }
-
+- "Robot"               { return SUBJECT; }
+- "robot"               { return SUBJECT; }
+- "Please"              { return COURTESY_WORD; }
+- "please"              { return COURTESY_WORD; }
+- "move"                { return MOVE; }
+- "turn"                { return TURN; }
+- [1-9]+                { yylval.num = atoi(yytext); return NUMBER; }
+- 90                    { yylval.num = atoi(yytext); return DEGREE; }
+- 180                   { yylval.num = atoi(yytext); return DEGREE; }
+- 270                   { yylval.num = atoi(yytext); return DEGREE; }
+- 360                   { yylval.num = atoi(yytext); return DEGREE; }
+- "blocks"              { return BLOCKS; }
+- "block"               { return BLOCKS; }
+- "degrees"             { return DEGREES; }
+- "ahead"               { return DIRECTION; }
+- "forward"             { return DIRECTION; }
+- "backwards"           { return BACKWARD; }
+- "backward"            { return BACKWARD; }
+- "and then"            { return CONNECTOR; }
+- "then"                { return CONNECTOR; }
+- "next"                { return CONNECTOR; }
+- "and finally"         { return CONNECTOR; }
+- ","                   { return COMMA; }
+- "."                   { return DOT; }
+- [ \t\n]+              { /* skip espacios vacios */ }
+- .                     { printf("Illegal character: %s\n", yytext); return -1; }
 
 
 ### ✅ Lista de ejemplos aceptados:
 
 - Robot please move 3 blocks ahead, and then turn 90 degrees.  
 - Please robot move 3 blocks, and then turn 360 degrees.  
-- Robot please move 3 blocks ahead and then turn 90 degrees, then move 2 blocks  
+- Robot please move 3 blocks ahead and then turn 90 degrees, then move 2 blocks.  
 
 ### ❌ Ejemplos rechazados:
 
@@ -79,6 +78,37 @@ En cambio, el sistema debe tener la habilidad de *descartar frases ambiguas, inc
 ---
 
 ### 📐 Definición de CFG
+
+La gramática desarrollada está orientada al análisis sintáctico de instrucciones en lenguaje natural controlado, dirigidas a un robot virtual. Estas instrucciones deben ser educadas, estructuradas y comprensibles para un compilador. El objetivo es traducir frases simples como “Please move 3 blocks forward.” en instrucciones de máquina tipo ensamblador.
+La gramática está escrita en YACC y define la estructura válida de las oraciones que puede entender el robot, asegurando:
+
+- Uso de expresiones de cortesía (please) en la instrucción.
+- Comandos compuestos como secuencias de movimientos y giros.
+- Traducción a instrucciones técnicas (MOV, TURN).
+- Validación del orden y número de componentes en cada frase.
+
+### Reglas clave en nuestra gramatica
+- Cada oración debe iniciar o finalizar con la palabra "please" (regla de cortesía).
+- Las frases pueden contener conectores como "then", "and then", etc.
+- Soporta movimientos hacia adelante y hacia atrás, así como giros en grados (permitiendo solo grados como: 90,180,270,360).
+- Cada instrucción o oración se finaliza con un punto (.) como delimitador.
+
+
+
+### ✅ Lista de ejemplos aceptados:
+
+- please move 3 blocks ahead. Robot please turn 90 degrees and then move 3 blocks. 
+- Robot please turn 90 degrees and then move 3 blocks ahead.
+- Robot move 4 blocks backward, then turn 90 degrees and finally move 3 blocks ahead please.
+
+### ❌ Ejemplos rechazados:
+
+- please robot move 3 blocks. Robot turn 90 degrees. 
+- Robot please move 8 blocks and then turn 270 degrees and finally move backwards
+- Robot please turn 78 degrees and then move 3 blocks.
+
+---
+
 
 ```bnf
 %%

@@ -76,6 +76,6 @@ class CPU:
         print('-' * self.grid_size)
 
 if __name__== "__main__":
-    cpu = CPU("instructions.asm") 
+    cpu = CPU("instructions.asm")
     cpu.load_instructions()
     cpu.execute()
